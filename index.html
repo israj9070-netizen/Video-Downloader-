@@ -1,0 +1,1787 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SnapLoad — Premium Video Downloader</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            *,
+            *::before,
+            *::after {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root {
+                --bg: #0a0a0f;
+                --surface: rgba(255, 255, 255, 0.04);
+                --border: rgba(255, 255, 255, 0.08);
+                --text: #f0f0f5;
+                --muted: #6b7280;
+                --accent: #7c3aed;
+                --accent2: #a855f7;
+                --green: #00e676;
+                --green2: #00c853;
+                --neon: #00d4ff;
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                font-family:
+                    "Inter",
+                    -apple-system,
+                    sans-serif;
+                background: var(--bg);
+                color: var(--text);
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                overflow-x: hidden;
+            }
+
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                background-image:
+                    linear-gradient(
+                        rgba(124, 58, 237, 0.03) 1px,
+                        transparent 1px
+                    ),
+                    linear-gradient(
+                        90deg,
+                        rgba(124, 58, 237, 0.03) 1px,
+                        transparent 1px
+                    );
+                background-size: 60px 60px;
+                pointer-events: none;
+                z-index: 0;
+            }
+
+            body::after {
+                content: "";
+                position: fixed;
+                top: -200px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 900px;
+                height: 420px;
+                background: radial-gradient(
+                    ellipse,
+                    rgba(124, 58, 237, 0.13) 0%,
+                    transparent 70%
+                );
+                pointer-events: none;
+                z-index: 0;
+            }
+
+            .wrapper {
+                position: relative;
+                z-index: 1;
+                width: 100%;
+                max-width: 860px;
+                padding: 0 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            /* ── TOPBAR ── */
+            .topbar {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 22px 0 0;
+                margin-bottom: 56px;
+            }
+
+            .logo {
+                font-size: 1.15rem;
+                font-weight: 800;
+                letter-spacing: -0.5px;
+                background: linear-gradient(135deg, #a855f7, #7c3aed);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .status-pill {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 14px;
+                background: rgba(34, 197, 94, 0.08);
+                border: 1px solid rgba(34, 197, 94, 0.2);
+                border-radius: 100px;
+                font-size: 0.78rem;
+                font-weight: 500;
+                color: #4ade80;
+            }
+
+            .status-dot {
+                width: 7px;
+                height: 7px;
+                background: #22c55e;
+                border-radius: 50%;
+                box-shadow: 0 0 8px #22c55e;
+                animation: pulse-dot 2s infinite;
+            }
+
+            @keyframes pulse-dot {
+                0%,
+                100% {
+                    opacity: 1;
+                    box-shadow: 0 0 8px #22c55e;
+                }
+                50% {
+                    opacity: 0.6;
+                    box-shadow: 0 0 16px #22c55e;
+                }
+            }
+
+            /* ── HERO ── */
+            .hero {
+                text-align: center;
+                margin-bottom: 48px;
+            }
+
+            .hero-eyebrow {
+                display: inline-block;
+                font-size: 0.72rem;
+                font-weight: 600;
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                color: var(--accent2);
+                margin-bottom: 18px;
+                padding: 5px 14px;
+                background: rgba(168, 85, 247, 0.1);
+                border: 1px solid rgba(168, 85, 247, 0.2);
+                border-radius: 100px;
+            }
+
+            .hero h1 {
+                font-size: clamp(2.2rem, 6vw, 3.8rem);
+                font-weight: 900;
+                line-height: 1.08;
+                letter-spacing: -2px;
+                color: #fff;
+                margin-bottom: 16px;
+            }
+
+            .hero h1 span {
+                background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .hero p {
+                font-size: 1rem;
+                color: var(--muted);
+                line-height: 1.6;
+                max-width: 440px;
+                margin: 0 auto;
+            }
+
+            /* ── PLATFORM CARDS ── */
+            .platform-cards {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+                width: 100%;
+                margin-bottom: 44px;
+            }
+
+            .pcard {
+                position: relative;
+                padding: 28px 16px 24px;
+                border-radius: 20px;
+                border: 1px solid var(--border);
+                background: var(--surface);
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                text-align: center;
+                transition:
+                    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    box-shadow 0.35s ease,
+                    border-color 0.35s ease;
+                overflow: hidden;
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                user-select: none;
+            }
+
+            .pcard::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                opacity: 0;
+                transition: opacity 0.35s ease;
+                border-radius: inherit;
+            }
+
+            .pcard-yt::before {
+                background: radial-gradient(
+                    ellipse at 50% 0%,
+                    rgba(255, 0, 0, 0.18) 0%,
+                    transparent 70%
+                );
+            }
+            .pcard-yt:hover {
+                transform: translateY(-8px) scale(1.03);
+                border-color: rgba(255, 0, 0, 0.45);
+                box-shadow:
+                    0 20px 60px rgba(255, 0, 0, 0.22),
+                    0 0 0 1px rgba(255, 0, 0, 0.18);
+            }
+            .pcard-yt:hover::before {
+                opacity: 1;
+            }
+
+            .pcard-ig::before {
+                background: radial-gradient(
+                    ellipse at 50% 0%,
+                    rgba(188, 24, 136, 0.2) 0%,
+                    transparent 70%
+                );
+            }
+            .pcard-ig:hover {
+                transform: translateY(-8px) scale(1.03);
+                border-color: rgba(188, 24, 136, 0.45);
+                box-shadow:
+                    0 20px 60px rgba(188, 24, 136, 0.22),
+                    0 0 0 1px rgba(188, 24, 136, 0.18);
+            }
+            .pcard-ig:hover::before {
+                opacity: 1;
+            }
+
+            .pcard-fb::before {
+                background: radial-gradient(
+                    ellipse at 50% 0%,
+                    rgba(24, 119, 242, 0.18) 0%,
+                    transparent 70%
+                );
+            }
+            .pcard-fb:hover {
+                transform: translateY(-8px) scale(1.03);
+                border-color: rgba(24, 119, 242, 0.45);
+                box-shadow:
+                    0 20px 60px rgba(24, 119, 242, 0.26),
+                    0 0 0 1px rgba(24, 119, 242, 0.18);
+            }
+            .pcard-fb:hover::before {
+                opacity: 1;
+            }
+
+            .pcard-icon {
+                position: relative;
+                z-index: 1;
+                width: 72px;
+                height: 72px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 18px;
+                transition:
+                    filter 0.35s ease,
+                    transform 0.35s ease;
+            }
+            .pcard:hover .pcard-icon {
+                transform: scale(1.1);
+            }
+            .pcard-yt .pcard-icon {
+                background: rgba(255, 0, 0, 0.12);
+            }
+            .pcard-yt:hover .pcard-icon {
+                filter: drop-shadow(0 0 18px rgba(255, 0, 0, 0.55));
+            }
+            .pcard-ig .pcard-icon {
+                background: rgba(188, 24, 136, 0.1);
+            }
+            .pcard-ig:hover .pcard-icon {
+                filter: drop-shadow(0 0 18px rgba(225, 48, 108, 0.55));
+            }
+            .pcard-fb .pcard-icon {
+                background: rgba(24, 119, 242, 0.12);
+            }
+            .pcard-fb:hover .pcard-icon {
+                filter: drop-shadow(0 0 18px rgba(24, 119, 242, 0.55));
+            }
+            .pcard-icon svg {
+                width: 40px;
+                height: 40px;
+            }
+
+            .pcard-name {
+                position: relative;
+                z-index: 1;
+                font-size: 1rem;
+                font-weight: 700;
+                color: #fff;
+            }
+            .pcard-hint {
+                position: relative;
+                z-index: 1;
+                font-size: 0.72rem;
+                color: var(--muted);
+            }
+            .pcard-chip {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                font-size: 0.6rem;
+                font-weight: 700;
+                letter-spacing: 0.06em;
+                padding: 3px 7px;
+                border-radius: 6px;
+                text-transform: uppercase;
+            }
+            .pcard-yt .pcard-chip {
+                background: rgba(255, 0, 0, 0.2);
+                color: #ff6b6b;
+                border: 1px solid rgba(255, 0, 0, 0.25);
+            }
+            .pcard-ig .pcard-chip {
+                background: rgba(188, 24, 136, 0.18);
+                color: #f472b6;
+                border: 1px solid rgba(188, 24, 136, 0.25);
+            }
+            .pcard-fb .pcard-chip {
+                background: rgba(24, 119, 242, 0.18);
+                color: #60a5fa;
+                border: 1px solid rgba(24, 119, 242, 0.25);
+            }
+
+            /* ── INPUT SECTION ── */
+            .input-section {
+                width: 100%;
+                max-width: 720px;
+                margin-bottom: 28px;
+            }
+
+            /* Detected badge above input on mobile */
+            .detected-row {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 10px;
+                min-height: 28px;
+            }
+
+            .detected-badge {
+                display: none;
+                align-items: center;
+                gap: 6px;
+                padding: 4px 12px;
+                border-radius: 100px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                white-space: nowrap;
+            }
+            .detected-badge.show {
+                display: inline-flex;
+            }
+            .detected-badge.yt {
+                background: rgba(255, 0, 0, 0.15);
+                color: #ff6b6b;
+                border: 1px solid rgba(255, 0, 0, 0.25);
+            }
+            .detected-badge.ig {
+                background: rgba(188, 24, 136, 0.15);
+                color: #f472b6;
+                border: 1px solid rgba(188, 24, 136, 0.25);
+            }
+            .detected-badge.fb {
+                background: rgba(24, 119, 242, 0.15);
+                color: #60a5fa;
+                border: 1px solid rgba(24, 119, 242, 0.25);
+            }
+            .detected-badge svg {
+                width: 14px;
+                height: 14px;
+                flex-shrink: 0;
+            }
+
+            .input-wrapper {
+                display: flex;
+                align-items: center;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1.5px solid rgba(255, 255, 255, 0.1);
+                border-radius: 18px;
+                padding: 8px 8px 8px 22px;
+                gap: 10px;
+                transition:
+                    border-color 0.3s,
+                    box-shadow 0.3s;
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+            }
+
+            .input-wrapper:focus-within {
+                border-color: rgba(168, 85, 247, 0.6);
+                box-shadow:
+                    0 0 0 4px rgba(168, 85, 247, 0.12),
+                    0 12px 40px rgba(0, 0, 0, 0.35);
+            }
+
+            #urlInput {
+                flex: 1;
+                min-width: 0;
+                background: transparent;
+                border: none;
+                outline: none;
+                color: var(--text);
+                font-size: 1.05rem;
+                font-family: inherit;
+                font-weight: 500;
+                padding: 12px 0;
+            }
+            #urlInput::placeholder {
+                color: rgba(107, 114, 128, 0.7);
+                font-weight: 400;
+            }
+
+            .btn-fetch {
+                flex-shrink: 0;
+                padding: 14px 28px;
+                background: linear-gradient(135deg, #7c3aed, #a855f7);
+                border: none;
+                border-radius: 13px;
+                color: #fff;
+                font-size: 0.95rem;
+                font-weight: 700;
+                font-family: inherit;
+                cursor: pointer;
+                transition: all 0.25s ease;
+                white-space: nowrap;
+                position: relative;
+                overflow: hidden;
+            }
+            .btn-fetch::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    135deg,
+                    rgba(255, 255, 255, 0.18),
+                    transparent
+                );
+                opacity: 0;
+                transition: opacity 0.25s;
+            }
+            .btn-fetch:hover::before {
+                opacity: 1;
+            }
+            .btn-fetch:hover {
+                box-shadow: 0 8px 28px rgba(124, 58, 237, 0.5);
+                transform: translateY(-1px);
+            }
+            .btn-fetch:active {
+                transform: translateY(0);
+            }
+            .btn-fetch:disabled {
+                opacity: 0.4;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
+
+            .input-hint {
+                margin-top: 12px;
+                font-size: 0.75rem;
+                color: var(--muted);
+                text-align: center;
+            }
+
+            /* ── STATUS / ERROR ── */
+            .status-bar {
+                display: none;
+                align-items: center;
+                gap: 12px;
+                padding: 14px 20px;
+                background: rgba(124, 58, 237, 0.08);
+                border: 1px solid rgba(124, 58, 237, 0.2);
+                border-radius: 14px;
+                margin-bottom: 20px;
+                width: 100%;
+            }
+            .status-bar.visible {
+                display: flex;
+            }
+
+            .spinner {
+                width: 18px;
+                height: 18px;
+                border: 2px solid rgba(168, 85, 247, 0.25);
+                border-top-color: #a855f7;
+                border-radius: 50%;
+                animation: spin 0.75s linear infinite;
+                flex-shrink: 0;
+            }
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+            .status-text {
+                font-size: 0.88rem;
+                color: #c4b5fd;
+            }
+
+            .error-bar {
+                display: none;
+                padding: 14px 20px;
+                background: rgba(239, 68, 68, 0.07);
+                border: 1px solid rgba(239, 68, 68, 0.2);
+                border-radius: 14px;
+                margin-bottom: 20px;
+                color: #fca5a5;
+                font-size: 0.88rem;
+                width: 100%;
+            }
+            .error-bar.visible {
+                display: block;
+            }
+
+            /* ── SLIDE-UP ANIMATION ── */
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(40px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            /* ── RESULT CARD (Glassmorphism) ── */
+            .result-card {
+                display: none;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.035);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 24px;
+                overflow: hidden;
+                margin-bottom: 32px;
+                backdrop-filter: blur(28px);
+                -webkit-backdrop-filter: blur(28px);
+                box-shadow:
+                    0 32px 80px rgba(0, 0, 0, 0.45),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            }
+
+            .result-card.visible {
+                display: block;
+                animation: slideUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+            }
+
+            /* ── VIDEO PLAYER AREA ── */
+            .player-wrap {
+                position: relative;
+                width: 100%;
+                background: #000;
+                aspect-ratio: 16/9;
+                overflow: hidden;
+            }
+
+            /* YouTube iframe */
+            .player-wrap iframe {
+                width: 100%;
+                height: 100%;
+                border: none;
+                display: block;
+            }
+
+            /* Fallback thumbnail player */
+            .thumb-player {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                cursor: pointer;
+            }
+
+            .thumb-img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+            .thumb-overlay-grad {
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    to top,
+                    rgba(0, 0, 0, 0.75) 0%,
+                    rgba(0, 0, 0, 0.1) 50%
+                );
+            }
+
+            .play-btn-overlay {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+            }
+
+            .play-circle {
+                width: 72px;
+                height: 72px;
+                background: rgba(255, 255, 255, 0.18);
+                backdrop-filter: blur(8px);
+                border: 2px solid rgba(255, 255, 255, 0.35);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition:
+                    transform 0.25s ease,
+                    background 0.25s ease;
+            }
+
+            .thumb-player:hover .play-circle {
+                transform: scale(1.12);
+                background: rgba(255, 255, 255, 0.26);
+            }
+
+            .play-circle svg {
+                width: 28px;
+                height: 28px;
+                margin-left: 4px;
+            }
+
+            .play-note {
+                font-size: 0.75rem;
+                color: rgba(255, 255, 255, 0.7);
+                background: rgba(0, 0, 0, 0.4);
+                padding: 4px 12px;
+                border-radius: 100px;
+                backdrop-filter: blur(8px);
+            }
+
+            /* Platform badge in player */
+            .player-platform-badge {
+                position: absolute;
+                top: 14px;
+                left: 14px;
+                padding: 4px 11px;
+                border-radius: 8px;
+                font-size: 0.7rem;
+                font-weight: 700;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                backdrop-filter: blur(8px);
+                z-index: 2;
+            }
+            .player-platform-badge.yt {
+                background: rgba(255, 0, 0, 0.75);
+                color: #fff;
+            }
+            .player-platform-badge.ig {
+                background: rgba(188, 24, 136, 0.75);
+                color: #fff;
+            }
+            .player-platform-badge.fb {
+                background: rgba(24, 119, 242, 0.75);
+                color: #fff;
+            }
+
+            .player-duration {
+                position: absolute;
+                bottom: 14px;
+                right: 14px;
+                padding: 4px 10px;
+                background: rgba(0, 0, 0, 0.65);
+                backdrop-filter: blur(8px);
+                border-radius: 7px;
+                font-size: 0.78rem;
+                font-weight: 600;
+                color: #fff;
+                z-index: 2;
+            }
+
+            /* ── VIDEO INFO ── */
+            .video-info {
+                padding: 24px 26px 26px;
+            }
+
+            .video-title {
+                font-size: 1.1rem;
+                font-weight: 700;
+                line-height: 1.45;
+                margin-bottom: 10px;
+                color: #fff;
+                letter-spacing: -0.3px;
+            }
+
+            .video-meta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 16px;
+                margin-bottom: 26px;
+            }
+
+            .meta-item {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                font-size: 0.8rem;
+                color: var(--muted);
+                font-weight: 500;
+            }
+            .meta-item svg {
+                width: 13px;
+                height: 13px;
+                opacity: 0.7;
+            }
+
+            /* ── QUALITY SELECTOR ── */
+            .quality-section {
+                margin-bottom: 22px;
+            }
+
+            .quality-label {
+                font-size: 0.7rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.12em;
+                color: var(--muted);
+                margin-bottom: 10px;
+            }
+
+            .format-grid {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .format-btn {
+                padding: 10px 16px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+                color: #d1d5db;
+                font-size: 0.82rem;
+                font-weight: 600;
+                font-family: inherit;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                backdrop-filter: blur(8px);
+            }
+            .format-btn svg {
+                width: 13px;
+                height: 13px;
+                flex-shrink: 0;
+            }
+            .format-btn:hover:not(:disabled) {
+                background: rgba(168, 85, 247, 0.15);
+                border-color: rgba(168, 85, 247, 0.4);
+                color: #c4b5fd;
+                box-shadow: 0 4px 16px rgba(168, 85, 247, 0.2);
+                transform: translateY(-1px);
+            }
+            .format-btn.selected {
+                background: rgba(168, 85, 247, 0.18);
+                border-color: rgba(168, 85, 247, 0.5);
+                color: #c4b5fd;
+            }
+            .format-btn:disabled {
+                opacity: 0.38;
+                cursor: not-allowed;
+                transform: none;
+            }
+            .format-quality {
+                font-size: 0.9em;
+                font-weight: 800;
+            }
+            .format-size {
+                font-size: 0.72em;
+                color: var(--muted);
+                font-weight: 400;
+            }
+
+            /* ── BIG DOWNLOAD BUTTON ── */
+            .btn-download-wrap {
+                width: 100%;
+            }
+
+            .btn-download {
+                width: 100%;
+                padding: 18px 28px;
+                border: none;
+                border-radius: 16px;
+                cursor: pointer;
+                font-family: inherit;
+                font-size: 1.05rem;
+                font-weight: 800;
+                letter-spacing: -0.2px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                position: relative;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                background: linear-gradient(
+                    135deg,
+                    #00c853 0%,
+                    #00e676 50%,
+                    #69ff47 100%
+                );
+                color: #001a00;
+                box-shadow:
+                    0 8px 32px rgba(0, 230, 118, 0.35),
+                    0 0 0 1px rgba(0, 230, 118, 0.2);
+            }
+
+            .btn-download::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(
+                    135deg,
+                    rgba(255, 255, 255, 0.25),
+                    transparent 60%
+                );
+                opacity: 0;
+                transition: opacity 0.3s;
+            }
+
+            .btn-download:hover::before {
+                opacity: 1;
+            }
+
+            .btn-download:hover {
+                transform: translateY(-2px);
+                box-shadow:
+                    0 16px 48px rgba(0, 230, 118, 0.5),
+                    0 0 60px rgba(0, 230, 118, 0.2),
+                    0 0 0 1px rgba(0, 230, 118, 0.3);
+            }
+
+            .btn-download:active {
+                transform: translateY(0);
+            }
+
+            .btn-download:disabled {
+                opacity: 0.45;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
+
+            .btn-download.loading {
+                background: linear-gradient(135deg, #374151, #4b5563);
+                color: #9ca3af;
+                box-shadow: none;
+            }
+
+            .btn-download svg {
+                width: 22px;
+                height: 22px;
+                flex-shrink: 0;
+            }
+
+            /* glow pulse when idle */
+            @keyframes glow-pulse {
+                0%,
+                100% {
+                    box-shadow:
+                        0 8px 32px rgba(0, 230, 118, 0.35),
+                        0 0 0 1px rgba(0, 230, 118, 0.2);
+                }
+                50% {
+                    box-shadow:
+                        0 8px 40px rgba(0, 230, 118, 0.55),
+                        0 0 70px rgba(0, 230, 118, 0.18),
+                        0 0 0 1px rgba(0, 230, 118, 0.3);
+                }
+            }
+            .btn-download:not(:disabled):not(.loading) {
+                animation: glow-pulse 3s ease-in-out infinite;
+            }
+            .btn-download:hover {
+                animation: none;
+            }
+
+            /* ── DOWNLOAD PROGRESS ── */
+            .download-progress {
+                display: none;
+                align-items: center;
+                gap: 12px;
+                padding: 14px 20px;
+                background: rgba(0, 200, 83, 0.07);
+                border: 1px solid rgba(0, 200, 83, 0.2);
+                border-radius: 12px;
+                margin-top: 14px;
+            }
+            .download-progress.visible {
+                display: flex;
+            }
+            .spinner-green {
+                width: 18px;
+                height: 18px;
+                border: 2px solid rgba(0, 230, 118, 0.25);
+                border-top-color: #00e676;
+                border-radius: 50%;
+                animation: spin 0.75s linear infinite;
+                flex-shrink: 0;
+            }
+            .download-text {
+                font-size: 0.85rem;
+                color: #6ee7b7;
+                flex: 1;
+            }
+
+            /* ── FOOTER ── */
+            footer {
+                width: 100%;
+                margin-top: auto;
+                padding: 36px 0 28px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 16px;
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .footer-links {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 4px;
+            }
+
+            .footer-links a {
+                padding: 6px 14px;
+                font-size: 0.78rem;
+                font-weight: 500;
+                color: var(--muted);
+                text-decoration: none;
+                border-radius: 8px;
+                transition:
+                    color 0.2s,
+                    background 0.2s;
+            }
+            .footer-links a:hover {
+                color: #d1d5db;
+                background: rgba(255, 255, 255, 0.05);
+            }
+
+            .footer-sep {
+                width: 3px;
+                height: 3px;
+                background: rgba(255, 255, 255, 0.15);
+                border-radius: 50%;
+            }
+            .footer-copy {
+                font-size: 0.72rem;
+                color: rgba(107, 114, 128, 0.55);
+            }
+
+            /* ── RESPONSIVE ── */
+            @media (max-width: 640px) {
+                .platform-cards {
+                    grid-template-columns: 1fr;
+                    gap: 10px;
+                }
+                .pcard {
+                    flex-direction: row;
+                    padding: 18px 16px;
+                    gap: 14px;
+                    text-align: left;
+                }
+                .pcard-icon {
+                    width: 54px;
+                    height: 54px;
+                    flex-shrink: 0;
+                }
+                .pcard-icon svg {
+                    width: 28px;
+                    height: 28px;
+                }
+                .pcard-chip {
+                    display: none;
+                }
+                .hero h1 {
+                    font-size: 2rem;
+                    letter-spacing: -1px;
+                }
+                .topbar {
+                    margin-bottom: 36px;
+                }
+                .video-info {
+                    padding: 18px;
+                }
+                .btn-download {
+                    font-size: 0.95rem;
+                    padding: 16px 20px;
+                }
+            }
+
+            @media (max-width: 440px) {
+                .btn-fetch {
+                    padding: 14px 16px;
+                    font-size: 0.88rem;
+                }
+                #urlInput {
+                    font-size: 0.9rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrapper">
+            <!-- TOP BAR -->
+            <nav class="topbar">
+                <div class="logo">⚡ SnapLoad</div>
+                <div class="status-pill">
+                    <div class="status-dot"></div>
+                    Server Online
+                </div>
+            </nav>
+
+            <!-- HERO -->
+            <section class="hero">
+                <span class="hero-eyebrow">Free · Fast · No Limits</span>
+                <h1>Download Any <span>Video</span><br />In Seconds</h1>
+                <p>
+                    Paste a link from YouTube, Instagram, or Facebook and get
+                    your video instantly — in the quality you choose.
+                </p>
+            </section>
+
+            <!-- PLATFORM CARDS -->
+            <div class="platform-cards">
+                <div
+                    class="pcard pcard-yt"
+                    onclick="focusInput()"
+                    title="Paste a YouTube link"
+                >
+                    <span class="pcard-chip">Supported</span>
+                    <div class="pcard-icon">
+                        <svg viewBox="0 0 48 48" fill="none">
+                            <rect
+                                width="48"
+                                height="48"
+                                rx="12"
+                                fill="#ff0000"
+                                opacity="0.15"
+                            />
+                            <path
+                                d="M38.5 15.8a4.15 4.15 0 0 0-2.92-2.93C33.1 12.2 24 12.2 24 12.2s-9.1 0-11.58.67a4.15 4.15 0 0 0-2.92 2.93C8.83 18.28 8.83 24 8.83 24s0 5.72.67 8.2a4.15 4.15 0 0 0 2.92 2.93C14.9 35.8 24 35.8 24 35.8s9.1 0 11.58-.67a4.15 4.15 0 0 0 2.92-2.93c.67-2.48.67-8.2.67-8.2s0-5.72-.67-8.2z"
+                                fill="#ff0000"
+                            />
+                            <path d="M20.8 29l7.7-5-7.7-5v10z" fill="white" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="pcard-name">YouTube</div>
+                        <div class="pcard-hint">720p · 1080p · MP3</div>
+                    </div>
+                </div>
+
+                <div
+                    class="pcard pcard-ig"
+                    onclick="focusInput()"
+                    title="Paste an Instagram link"
+                >
+                    <span class="pcard-chip">Supported</span>
+                    <div class="pcard-icon">
+                        <svg viewBox="0 0 48 48" fill="none">
+                            <defs>
+                                <linearGradient
+                                    id="ig-bg"
+                                    x1="0"
+                                    y1="0"
+                                    x2="1"
+                                    y2="1"
+                                >
+                                    <stop offset="0%" stop-color="#f09433" />
+                                    <stop offset="25%" stop-color="#e6683c" />
+                                    <stop offset="50%" stop-color="#dc2743" />
+                                    <stop offset="75%" stop-color="#cc2366" />
+                                    <stop offset="100%" stop-color="#bc1888" />
+                                </linearGradient>
+                                <linearGradient
+                                    id="ig-icon"
+                                    x1="0"
+                                    y1="1"
+                                    x2="1"
+                                    y2="0"
+                                >
+                                    <stop offset="0%" stop-color="#f09433" />
+                                    <stop offset="100%" stop-color="#bc1888" />
+                                </linearGradient>
+                            </defs>
+                            <rect
+                                width="48"
+                                height="48"
+                                rx="12"
+                                fill="url(#ig-bg)"
+                                opacity="0.15"
+                            />
+                            <rect
+                                x="10"
+                                y="10"
+                                width="28"
+                                height="28"
+                                rx="8"
+                                stroke="url(#ig-icon)"
+                                stroke-width="2.5"
+                                fill="none"
+                            />
+                            <circle
+                                cx="24"
+                                cy="24"
+                                r="7"
+                                stroke="url(#ig-icon)"
+                                stroke-width="2.5"
+                                fill="none"
+                            />
+                            <circle
+                                cx="32.5"
+                                cy="15.5"
+                                r="1.8"
+                                fill="url(#ig-icon)"
+                            />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="pcard-name">Instagram</div>
+                        <div class="pcard-hint">Reels · Photos · Stories</div>
+                    </div>
+                </div>
+
+                <div
+                    class="pcard pcard-fb"
+                    onclick="focusInput()"
+                    title="Paste a Facebook link"
+                >
+                    <span class="pcard-chip">Supported</span>
+                    <div class="pcard-icon">
+                        <svg viewBox="0 0 48 48" fill="none">
+                            <rect
+                                width="48"
+                                height="48"
+                                rx="12"
+                                fill="#1877f2"
+                                opacity="0.15"
+                            />
+                            <path
+                                d="M38 24C38 16.27 31.73 10 24 10S10 16.27 10 24c0 6.99 5.12 12.78 11.81 13.82V28.09h-3.55V24h3.55v-3.08c0-3.51 2.09-5.45 5.29-5.45 1.53 0 3.13.27 3.13.27v3.44h-1.76c-1.74 0-2.28 1.08-2.28 2.18V24h3.88l-.62 4.09h-3.26v9.73C32.88 36.78 38 30.99 38 24z"
+                                fill="#1877f2"
+                            />
+                            <path
+                                d="M28.45 28.09l.62-4.09h-3.88v-2.64c0-1.1.54-2.18 2.28-2.18h1.76V15.74s-1.6-.27-3.13-.27c-3.2 0-5.29 1.94-5.29 5.45V24h-3.55v4.09h3.55v9.73a14.1 14.1 0 0 0 4.38 0V28.09h3.26z"
+                                fill="white"
+                            />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="pcard-name">Facebook</div>
+                        <div class="pcard-hint">Videos · Reels · Live</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INPUT -->
+            <div class="input-section">
+                <!-- Detected platform badge row (above input, clean on mobile) -->
+                <div class="detected-row">
+                    <div class="detected-badge" id="detectedBadge">
+                        <svg
+                            id="detectedIcon"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                        ></svg>
+                        <span id="detectedName"></span>
+                        <span>— Detected</span>
+                    </div>
+                </div>
+
+                <div class="input-wrapper">
+                    <input
+                        type="url"
+                        id="urlInput"
+                        placeholder="Paste YouTube, Instagram or Facebook link here..."
+                        autocomplete="off"
+                        spellcheck="false"
+                    />
+                    <button
+                        class="btn-fetch"
+                        id="fetchBtn"
+                        onclick="fetchVideo()"
+                    >
+                        Fetch Info
+                    </button>
+                </div>
+                <p class="input-hint">
+                    Press Enter or click Fetch — select quality below to
+                    download
+                </p>
+            </div>
+
+            <!-- STATUS / ERROR -->
+            <div class="status-bar" id="statusBar">
+                <div class="spinner"></div>
+                <span class="status-text" id="statusText"
+                    >Fetching video info...</span
+                >
+            </div>
+            <div class="error-bar" id="errorBar"></div>
+
+            <!-- RESULT CARD -->
+            <div class="result-card" id="resultCard">
+                <!-- VIDEO PLAYER -->
+                <div class="player-wrap" id="playerWrap">
+                    <!-- populated by JS -->
+                </div>
+
+                <!-- INFO + QUALITY + DOWNLOAD -->
+                <div class="video-info">
+                    <div class="video-title" id="videoTitle"></div>
+                    <div class="video-meta">
+                        <span
+                            class="meta-item"
+                            id="uploaderItem"
+                            style="display: none"
+                        >
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                            <span id="videoUploader"></span>
+                        </span>
+                        <span
+                            class="meta-item"
+                            id="viewsItem"
+                            style="display: none"
+                        >
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                            <span id="videoViews"></span>
+                        </span>
+                        <span
+                            class="meta-item"
+                            id="durationItem"
+                            style="display: none"
+                        >
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                            <span id="videoDuration"></span>
+                        </span>
+                    </div>
+
+                    <!-- Quality Selector -->
+                    <div class="quality-section">
+                        <div class="quality-label">Choose Quality</div>
+                        <div class="format-grid" id="formatList"></div>
+                    </div>
+
+                    <!-- Big Download Button -->
+                    <div class="btn-download-wrap">
+                        <button
+                            class="btn-download"
+                            id="btnDownload"
+                            onclick="triggerDownload()"
+                            disabled
+                        >
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <polyline points="8 17 12 21 16 17" />
+                                <line x1="12" y1="21" x2="12" y2="9" />
+                                <path
+                                    d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"
+                                />
+                            </svg>
+                            Select a quality to download
+                        </button>
+                    </div>
+
+                    <!-- Download progress -->
+                    <div class="download-progress" id="downloadProgress">
+                        <div class="spinner-green"></div>
+                        <span class="download-text" id="downloadText"
+                            >Downloading your video...</span
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /wrapper -->
+
+        <!-- FOOTER -->
+        <footer>
+            <div class="footer-links">
+                <a href="#">API</a>
+                <div class="footer-sep"></div>
+                <a href="#">Terms of Service</a>
+                <div class="footer-sep"></div>
+                <a href="#">Privacy Policy</a>
+                <div class="footer-sep"></div>
+                <a href="#">DMCA</a>
+                <div class="footer-sep"></div>
+                <a href="#">Contact</a>
+            </div>
+            <div class="footer-copy">
+                &copy; 2025 SnapLoad. For personal use only. We do not store
+                your videos.
+            </div>
+        </footer>
+
+        <script>
+            const urlInput = document.getElementById("urlInput");
+            const fetchBtn = document.getElementById("fetchBtn");
+            const statusBar = document.getElementById("statusBar");
+            const statusText = document.getElementById("statusText");
+            const errorBar = document.getElementById("errorBar");
+            const resultCard = document.getElementById("resultCard");
+            const btnDownload = document.getElementById("btnDownload");
+
+            let currentUrl = "";
+            let currentPlatform = "";
+            let selectedFormatId = null;
+
+            // ── Platform detection ──
+            const PLATFORMS = {
+                youtube: {
+                    name: "YouTube",
+                    cls: "yt",
+                    test: (u) => /youtube\.com|youtu\.be/i.test(u),
+                    icon: `<path d="M16.23 6.32a1.66 1.66 0 0 0-1.17-1.17C13.7 4.88 10 4.88 10 4.88s-3.7 0-5.06.27A1.66 1.66 0 0 0 3.77 6.32C3.5 7.68 3.5 10 3.5 10s0 2.32.27 3.68a1.66 1.66 0 0 0 1.17 1.17C6.3 15.12 10 15.12 10 15.12s3.7 0 5.06-.27a1.66 1.66 0 0 0 1.17-1.17C16.5 12.32 16.5 10 16.5 10s0-2.32-.27-3.68z" fill="#ff0000"/><path d="M8.5 12.5v-5l4 2.5-4 2.5z" fill="white"/>`,
+                },
+                instagram: {
+                    name: "Instagram",
+                    cls: "ig",
+                    test: (u) => /instagram\.com/i.test(u),
+                    icon: `<defs><linearGradient id="igd" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#f09433"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><rect x="3" y="3" width="14" height="14" rx="4" stroke="url(#igd)" stroke-width="1.5" fill="none"/><circle cx="10" cy="10" r="3" stroke="url(#igd)" stroke-width="1.5" fill="none"/><circle cx="14" cy="6" r="0.8" fill="url(#igd)"/>`,
+                },
+                facebook: {
+                    name: "Facebook",
+                    cls: "fb",
+                    test: (u) => /facebook\.com|fb\.watch/i.test(u),
+                    icon: `<path d="M16 10C16 6.69 13.31 4 10 4S4 6.69 4 10c0 2.99 2.19 5.47 5.06 5.91V12h-1.52v-2h1.52v-1.32c0-1.5.9-2.33 2.27-2.33.65 0 1.34.12 1.34.12v1.47h-.75c-.74 0-.97.46-.97.93V10h1.66l-.27 2h-1.39v3.91A6.01 6.01 0 0 0 16 10z" fill="#1877f2"/>`,
+                },
+            };
+
+            function detectPlatform(url) {
+                for (const [k, p] of Object.entries(PLATFORMS)) {
+                    if (p.test(url)) return k;
+                }
+                return null;
+            }
+
+            function extractYouTubeId(url) {
+                const m = url.match(
+                    /(?:v=|youtu\.be\/|embed\/)([A-Za-z0-9_-]{11})/,
+                );
+                return m ? m[1] : null;
+            }
+
+            urlInput.addEventListener("input", () => {
+                const url = urlInput.value.trim();
+                const platform = detectPlatform(url);
+                const badge = document.getElementById("detectedBadge");
+
+                if (platform && url.length > 10) {
+                    const p = PLATFORMS[platform];
+                    badge.className = `detected-badge show ${p.cls}`;
+                    document.getElementById("detectedName").textContent =
+                        p.name;
+                    document.getElementById("detectedIcon").innerHTML = p.icon;
+                    currentPlatform = platform;
+                } else {
+                    badge.className = "detected-badge";
+                    currentPlatform = "";
+                }
+            });
+
+            urlInput.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") fetchVideo();
+            });
+
+            function focusInput() {
+                urlInput.focus();
+            }
+
+            // ── UI helpers ──
+            function showStatus(msg) {
+                statusBar.classList.add("visible");
+                statusText.textContent = msg;
+                errorBar.classList.remove("visible");
+            }
+            function hideStatus() {
+                statusBar.classList.remove("visible");
+            }
+            function showError(msg) {
+                errorBar.textContent = msg;
+                errorBar.classList.add("visible");
+                hideStatus();
+            }
+            function fmt(seconds) {
+                if (!seconds) return "";
+                const h = Math.floor(seconds / 3600);
+                const m = Math.floor((seconds % 3600) / 60);
+                const s = seconds % 60;
+                return h > 0
+                    ? `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`
+                    : `${m}:${String(s).padStart(2, "0")}`;
+            }
+            function fmtSize(bytes) {
+                if (!bytes) return "";
+                const mb = bytes / (1024 * 1024);
+                return mb >= 1000
+                    ? `${(mb / 1024).toFixed(1)} GB`
+                    : `${mb.toFixed(0)} MB`;
+            }
+            function fmtViews(n) {
+                if (!n) return "";
+                if (n >= 1e9) return `${(n / 1e9).toFixed(1)}B views`;
+                if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M views`;
+                if (n >= 1e3) return `${(n / 1e3).toFixed(0)}K views`;
+                return `${n} views`;
+            }
+
+            // ── Fetch ──
+            async function fetchVideo() {
+                const url = urlInput.value.trim();
+                if (!url) {
+                    showError("Please paste a video URL first");
+                    return;
+                }
+
+                currentUrl = url;
+                resultCard.classList.remove("visible");
+                fetchBtn.disabled = true;
+                selectedFormatId = null;
+                showStatus("Analysing link...");
+
+                try {
+                    const res = await fetch("/fetch", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ url }),
+                    });
+                    const data = await res.json();
+                    if (data.error) {
+                        showError(data.error);
+                        fetchBtn.disabled = false;
+                        return;
+                    }
+                    pollStatus(data.task_id, "fetch");
+                } catch {
+                    showError("Failed to connect to server");
+                    fetchBtn.disabled = false;
+                }
+            }
+
+            function pollStatus(taskId, type) {
+                const iv = setInterval(async () => {
+                    try {
+                        const res = await fetch(`/status/${taskId}`);
+                        const data = await res.json();
+
+                        if (data.status === "error") {
+                            clearInterval(iv);
+                            showError(data.error || "An error occurred");
+                            fetchBtn.disabled = false;
+                            document
+                                .querySelectorAll(".format-btn")
+                                .forEach((b) => (b.disabled = false));
+                            document
+                                .getElementById("downloadProgress")
+                                .classList.remove("visible");
+                            return;
+                        }
+
+                        if (type === "fetch" && data.status === "ready") {
+                            clearInterval(iv);
+                            hideStatus();
+                            fetchBtn.disabled = false;
+                            renderResult(data.info);
+                            return;
+                        }
+
+                        if (type === "download" && data.status === "complete") {
+                            clearInterval(iv);
+                            document
+                                .getElementById("downloadProgress")
+                                .classList.remove("visible");
+                            btnDownload.disabled = false;
+                            btnDownload.classList.remove("loading");
+                            window.location.href = `/file/${encodeURIComponent(data.filename)}`;
+                            return;
+                        }
+
+                        if (type === "fetch") {
+                            const msgs = {
+                                fetching: "Fetching video metadata...",
+                                started: "Connecting...",
+                            };
+                            showStatus(msgs[data.status] || "Loading...");
+                        }
+                    } catch {
+                        clearInterval(iv);
+                        showError("Lost connection to server");
+                        fetchBtn.disabled = false;
+                    }
+                }, 1000);
+            }
+
+            // ── Render result ──
+            function renderResult(info) {
+                // Title
+                document.getElementById("videoTitle").textContent =
+                    info.title || "Untitled Video";
+
+                // Meta
+                const uploaderItem = document.getElementById("uploaderItem");
+                if (info.uploader) {
+                    document.getElementById("videoUploader").textContent =
+                        info.uploader;
+                    uploaderItem.style.display = "flex";
+                } else {
+                    uploaderItem.style.display = "none";
+                }
+
+                const viewsItem = document.getElementById("viewsItem");
+                if (info.view_count) {
+                    document.getElementById("videoViews").textContent =
+                        fmtViews(info.view_count);
+                    viewsItem.style.display = "flex";
+                } else {
+                    viewsItem.style.display = "none";
+                }
+
+                const durationItem = document.getElementById("durationItem");
+                if (info.duration) {
+                    document.getElementById("videoDuration").textContent = fmt(
+                        info.duration,
+                    );
+                    durationItem.style.display = "flex";
+                } else {
+                    durationItem.style.display = "none";
+                }
+
+                // Player
+                buildPlayer(info);
+
+                // Formats
+                buildFormats(info.formats);
+
+                // Reset download button
+                btnDownload.disabled = true;
+                btnDownload.classList.remove("loading");
+                btnDownload.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="8 17 12 21 16 17"/>
+                <line x1="12" y1="21" x2="12" y2="9"/>
+                <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/>
+            </svg>
+            Select a quality to download`;
+
+                document
+                    .getElementById("downloadProgress")
+                    .classList.remove("visible");
+
+                // Show with slide-up
+                resultCard.classList.remove("visible");
+                void resultCard.offsetWidth; // force reflow for re-animation
+                resultCard.classList.add("visible");
+                resultCard.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                });
+            }
+
+            function buildPlayer(info) {
+                const wrap = document.getElementById("playerWrap");
+                wrap.innerHTML = "";
+
+                const platform =
+                    currentPlatform || detectPlatform(currentUrl) || "";
+                const p = PLATFORMS[platform];
+
+                // YouTube: real embed
+                if (platform === "youtube") {
+                    const vid = extractYouTubeId(currentUrl);
+                    if (vid) {
+                        const iframe = document.createElement("iframe");
+                        iframe.src = `https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1`;
+                        iframe.allow =
+                            "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+                        iframe.allowFullscreen = true;
+                        wrap.appendChild(iframe);
+                        return;
+                    }
+                }
+
+                // Fallback: thumbnail with play-button overlay
+                const thumbSrc = info.thumbnail || "";
+                const platformLabel = p ? p.name : "Video";
+                const platformCls = p ? p.cls : "";
+                const durTxt = info.duration ? fmt(info.duration) : "";
+
+                wrap.innerHTML = `
+            <div class="thumb-player">
+                ${thumbSrc ? `<img class="thumb-img" src="${escHtml(thumbSrc)}" alt="Thumbnail">` : `<div class="thumb-img" style="background:#111;"></div>`}
+                <div class="thumb-overlay-grad"></div>
+                ${platformCls ? `<span class="player-platform-badge ${platformCls}">${escHtml(platformLabel)}</span>` : ""}
+                ${durTxt ? `<span class="player-duration">${escHtml(durTxt)}</span>` : ""}
+                <div class="play-btn-overlay">
+                    <div class="play-circle">
+                        <svg viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    </div>
+                    <span class="play-note">Preview plays after download on this platform</span>
+                </div>
+            </div>`;
+            }
+
+            function buildFormats(formats) {
+                const list = document.getElementById("formatList");
+                list.innerHTML = "";
+                selectedFormatId = null;
+
+                formats.forEach((f, i) => {
+                    const btn = document.createElement("button");
+                    btn.className = "format-btn" + (i === 0 ? " selected" : "");
+                    if (i === 0) selectedFormatId = f.format_id;
+
+                    const isAudio =
+                        f.quality && f.quality.toLowerCase().includes("mp3");
+                    const icon = isAudio
+                        ? `<svg viewBox="0 0 20 20" fill="currentColor"><path d="M18 3a1 1 0 0 0-1.196-.98l-10 2A1 1 0 0 0 6 5v8.17a2.5 2.5 0 1 0 1 1.98V7.82l8-1.6V12.17a2.5 2.5 0 1 0 1 1.98V4a1 1 0 0 0 0-.001V3z"/></svg>`
+                        : `<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H4zm3 2h6v4l-2-2-2 2V5H7zm-2 8v-1h10v1H5z" clip-rule="evenodd"/></svg>`;
+
+                    btn.innerHTML = `${icon}<span class="format-quality">${escHtml(f.quality)}</span>${f.filesize ? `<span class="format-size">${fmtSize(f.filesize)}</span>` : ""}`;
+                    btn.dataset.formatId = f.format_id;
+
+                    btn.onclick = () => {
+                        document
+                            .querySelectorAll(".format-btn")
+                            .forEach((b) => b.classList.remove("selected"));
+                        btn.classList.add("selected");
+                        selectedFormatId = f.format_id;
+                        // Update download button
+                        btnDownload.disabled = false;
+                        btnDownload.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="8 17 12 21 16 17"/>
+                        <line x1="12" y1="21" x2="12" y2="9"/>
+                        <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/>
+                    </svg>
+                    Download ${escHtml(f.quality)} Video`;
+                    };
+                    list.appendChild(btn);
+                });
+
+                // Auto-select first and enable button
+                if (formats.length > 0) {
+                    selectedFormatId = formats[0].format_id;
+                    btnDownload.disabled = false;
+                    const f0 = formats[0];
+                    btnDownload.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="8 17 12 21 16 17"/>
+                    <line x1="12" y1="21" x2="12" y2="9"/>
+                    <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/>
+                </svg>
+                Download ${escHtml(f0.quality)} Video`;
+                }
+            }
+
+            async function triggerDownload() {
+                if (!selectedFormatId) return;
+
+                btnDownload.disabled = true;
+                btnDownload.classList.add("loading");
+                btnDownload.innerHTML = `<div class="spinner" style="border-top-color:#9ca3af;width:20px;height:20px"></div> Preparing download...`;
+
+                const dp = document.getElementById("downloadProgress");
+                dp.classList.add("visible");
+                document.getElementById("downloadText").textContent =
+                    "Connecting to server...";
+
+                try {
+                    const res = await fetch("/download", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            url: currentUrl,
+                            format_id: selectedFormatId,
+                        }),
+                    });
+                    const data = await res.json();
+
+                    if (data.error) {
+                        showError(data.error);
+                        dp.classList.remove("visible");
+                        btnDownload.disabled = false;
+                        btnDownload.classList.remove("loading");
+                        return;
+                    }
+
+                    document.getElementById("downloadText").textContent =
+                        "Downloading your video — please wait...";
+                    pollStatus(data.task_id, "download");
+                } catch {
+                    showError("Failed to start download");
+                    dp.classList.remove("visible");
+                    btnDownload.disabled = false;
+                    btnDownload.classList.remove("loading");
+                }
+            }
+
+            function escHtml(str) {
+                return String(str)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;");
+            }
+        </script>
+    </body>
+</html>
