@@ -59,18 +59,28 @@ def fetch_video_info(task_id, url):
                     continue
                 seen.add(label)
 
-                formats.append({
-                    "format_id": format_id,
-                    "ext": ext,
-                    "quality": label,
-                    "height": height,
-                    "filesize": filesize,
-                })
+                formats.append(
+                    {
+                        "format_id": format_id,
+                        "ext": ext,
+                        "quality": label,
+                        "height": height,
+                        "filesize": filesize,
+                    }
+                )
 
             formats.sort(key=lambda x: x.get("height", 0), reverse=True)
 
         if not formats:
-            formats = [{"format_id": "best", "ext": "mp4", "quality": "Best", "height": 0, "filesize": None}]
+            formats = [
+                {
+                    "format_id": "best",
+                    "ext": "mp4",
+                    "quality": "Best",
+                    "height": 0,
+                    "filesize": None,
+                }
+            ]
 
         tasks[task_id]["status"] = "ready"
         tasks[task_id]["info"] = {
@@ -178,6 +188,7 @@ def serve_file(filename):
 
 if __name__ == "__main__":
     import sys
+
     port = int(os.environ.get("PORT", 5000))
     print(f"Starting server on port {port}", flush=True)
     sys.stdout.flush()
